@@ -1,13 +1,35 @@
+import React from 'react'
+import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import Display from '../Display'
 
+import mockFetchShow from '../../api/fetchShow'
 
+import { testShow } from './mockdata'
+import { act } from 'react-dom/test-utils'
 
+jest.mock('../../api/fetchShow')
 
+test('it renders with no props', () => {
+  render(<Display />)
+})
 
+test('it updates after the show data button is clicked', async () => {
+  render(<Display />)
+  
+  mockFetchShow.mockResolvedValueOnce({
+    ...testShow
+  })
 
+  let button = screen.queryByRole('button')
+  expect(button).toBeInTheDocument()
+  let episodesContainer = screen.queryByTestId('episodes-container')
+  expect(episodesContainer).toBeNull()
 
-
-
-
+  act(() => {
+    userEvent.click(button)
+  })
+})
 
 
 

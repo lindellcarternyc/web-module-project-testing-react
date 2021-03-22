@@ -4,15 +4,7 @@ import userEvent from '@testing-library/user-event'
 
 import Show from './../Show';
 
-const testShow = {
-  name: 'Test Show',
-  summary: 'Test show summary',
-  seasons: [{
-    id: 'test_show_season_1',
-    name: 'Test show - season 1',
-    episodes: []
-  }]
-}
+import { testShow } from './mockdata'
 
 test('renders testShow and no selected Season without errors', ()=>{
   render(<Show show={testShow} selectedSeason="none" />)
