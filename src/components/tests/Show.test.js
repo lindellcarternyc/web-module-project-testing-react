@@ -1,26 +1,62 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event'
 
 import Show from './../Show';
 
 const testShow = {
-    //add in approprate test data structure here.
+  name: 'Test Show',
+  summary: 'Test show summary',
+  seasons: [{
+    id: 'test_show_season_1',
+    name: 'Test show - season 1',
+    episodes: []
+  }]
 }
 
 test('renders testShow and no selected Season without errors', ()=>{
+  render(<Show show={testShow} selectedSeason="none" />)
+
+  const header = screen.getByRole('heading')
+  expect(header).toHaveTextContent(testShow.name)
 });
 
 test('renders Loading component when prop show is null', () => {
+  render(<Show show={null} />)
+  const loading = screen.queryByTestId('loading-container')
+  expect(loading).toBeTruthy()
+  expect(loading).toBeInTheDocument()
 });
 
 test('renders same number of options seasons are passed in', ()=>{
+  render(<Show show={testShow} selectedSeason="none" />)
+  const seasonOptions = screen.queryAllByTestId('season-option')
+  expect(seasonOptions).toBeTruthy()
+  expect(seasonOptions).toHaveLength(1)
 });
 
 test('handleSelect is called when an season is selected', () => {
+  const mockHandleSelect = jest.fn()
+
+  render(<Show show={testShow} selectedSeason="none" handleSelect={mockHandleSelect}/>)
+
+  const selectSeasons = screen.getByLabelText(/select a season/i)
+  
+  userEvent.selectOptions(selectSeasons, testShow.seasons[0].id)
+
+  expect(mockHandleSelect).toHaveBeenCalledTimes(1)
+  expect(mockHandleSelect.mock.calls).toHaveLength(1)
 });
 
 test('component renders when no seasons are selected and when rerenders with a season passed in', () => {
+  const { rerender } = render(<Show show={testShow} selectedSeason="none" />)
+
+  let episodesContainer = screen.queryByTestId('episodes-container')
+  expect(episodesContainer).toBeNull()
+
+  rerender(<Show show={testShow} selectedSeason={0} />)
+  episodesContainer = screen.queryByTestId('episodes-container')
+  expect(episodesContainer).toBeInTheDocument()
 });
 
 //Tasks:
