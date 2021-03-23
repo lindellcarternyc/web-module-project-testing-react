@@ -10,13 +10,13 @@ const Display = (props) => {
     const [show, setShow] = useState(null);
     const [selectedSeason, setSelectedSeason] = useState("none");
 
-    const { displayFunc } = props;
+    const { displayFunc, onSelectSeason } = props;
     const handleClick = (showName) => {
         fetchShow(showName).then(data => {
             setShow(data);
 
             if (displayFunc) {
-                displayFunc();
+                displayFunc(data);
             }
 
         });
@@ -24,6 +24,9 @@ const Display = (props) => {
         
     const handleSelect = e => {
         setSelectedSeason(e.target.value);
+        if (onSelectSeason) {
+          onSelectSeason(e.target.value)
+        }
     };
 
     return (

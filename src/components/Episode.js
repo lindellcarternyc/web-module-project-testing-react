@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'
 
 const Episode = (props)=> {
     const {episode} = props;
@@ -9,7 +10,7 @@ const Episode = (props)=> {
         <img className="episode-image" src={imgsrc} alt={imgsrc} />
         <div className="episode-info">
             <p className="episode-number">Season {season}, Episode {number}</p>
-            <h3>{name}</h3>
+            <h3><Link to={`/episode/${id}`}>{name}</Link></h3>
             <p>{summary}</p>
             <div className="flex-spacer" />
             <p className="episode-runtime">{runtime} minutes</p>

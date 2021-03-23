@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom'
 import Episode from './../Episode';
 
 const testEpisode = {
@@ -18,8 +19,13 @@ const testEpisodeWithoutImage = {
     image: null
 }
 
+const renderEpisode = ({episode}) => {
+  return render(<Episode episode={episode}/>, { wrapper: MemoryRouter })
+}
+
 test("renders without error", () => {
-  render(<Episode episode={testEpisode} />)
+  // render(<Episode episode={testEpisode} />)
+  renderEpisode({ episode: testEpisode })
 });
 
 test("renders the summury test passed as prop", ()=>{
@@ -28,8 +34,8 @@ test("renders the summury test passed as prop", ()=>{
     ...testEpisode,
     summary: 'This is a summary'
   }
-  
-  render(<Episode episode={testEpisodeWithCustomSummary} />)
+
+  renderEpisode({ episode: testEpisodeWithCustomSummary})
   const summary = screen.queryByText(testEpisodeWithCustomSummary.summary)
 
   expect(summary).not.toBeNull()
@@ -38,7 +44,7 @@ test("renders the summury test passed as prop", ()=>{
 });
 
 test("renders default image when image is not defined", ()=>{
-    render(<Episode episode={testEpisodeWithoutImage} />)
+    renderEpisode({ episode: testEpisodeWithoutImage })
 
     const image = screen.queryByRole('img')
     expect(image).toBeInTheDocument()
