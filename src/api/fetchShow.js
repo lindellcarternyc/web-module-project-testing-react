@@ -10,29 +10,39 @@ const formatSeasons = (allEpisodes) => {
   ];
 
   allEpisodes.forEach((episode) => {
-    seasons[episode.season-1].episodes.push({
-      ...episode,
-      summary: stripTags(episode.summary),
-      image: episode.image ? episode.image.medium : null
-    });
+    const season = seasons[episode.season - 1]
+    if (season) {
+      season.episodes.push({
+        ...episode,
+        summary: stripTags(episode.summary),
+        image: episode.image ? episode.image.medium : null
+      });
+    }
   });
 
   return seasons;
 };
 
+const formatShow = (data) => {
+  return {
+    name: data.name,
+    image: data.image,
+    summary: stripTags(data.summary),
+    seasons: formatSeasons(data._embedded.episodes)
+  }
+}
 
-const fetchShow = () => {
+const getShowQuery = (showName) => {
+  return `https://api.tvmaze.com/singlesearch/shows?q=${showName}&embed=episodes`
+}
+
+const fetchShow = (showName) => {
   return axios
-    .get("https://api.tvmaze.com/singlesearch/shows?q=stranger-things&embed=episodes")
+    .get(getShowQuery(showName))
     .then(res => {
       const { data } = res;
       
-      return {
-        name: data.name,
-        image: data.image,
-        summary: stripTags(data.summary),
-        seasons: formatSeasons(data._embedded.episodes)
-      };
+      return formatShow(data);
     });
 };
 
