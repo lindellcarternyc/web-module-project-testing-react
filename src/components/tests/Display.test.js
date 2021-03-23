@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Display from '../Display'
 
@@ -26,12 +26,34 @@ test('it updates after the show data button is clicked', async () => {
   let episodesContainer = screen.queryByTestId('episodes-container')
   expect(episodesContainer).toBeNull()
 
-  act(() => {
-    userEvent.click(button)
+  userEvent.click(button)
+
+  waitFor(() => {
+    button = screen.queryByRole('button')
+    expect(button).toBeNull()
+
+    episodesContainer = screen.queryByTestId('episodes-container')
+    expect(episodesContainer).toBeInTheDocument()
+
+    const seasonsOptions = screen.queryByTestId('season-option')
+    expect(seasonsOptions).toHaveLength(testShow.seasons.length)
   })
 })
 
+test('it calls display prop', () => {
+  const mockDisplayFunc = jest.fn()
+  mockFetchShow.mockResolvedValueOnce({
+    ...testShow
+  })
+  render(<Display displayFunc={mockDisplayFunc}/>)
 
+  const button = screen.getByRole('button')
+  userEvent.click(button)
+
+  waitFor(() => {
+    expect(mockDisplayFunc.mock.calls).toHaveLength(1)
+  })
+})
 
 
 
